@@ -5,10 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>嬰幼兒友善設施全覽</title>
   <style>
-    :root{
-      --bg:#f6f7f8; --card:#fff; --brand:#2b2f36; --accent:#4a90e2;
-      --muted:#8a8f98; --border:#e6e8eb;
-    }
+    :root{--bg:#f6f7f8;--card:#fff;--brand:#2b2f36;--accent:#4a90e2;--muted:#8a8f98;--border:#e6e8eb}
     *{box-sizing:border-box}
     body{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue","PingFang TC","Microsoft JhengHei",Arial,sans-serif;background:var(--bg);margin:0;color:var(--brand);line-height:1.5}
     header{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
@@ -29,7 +26,7 @@
     .tag{background:#f1f3f5;border:1px solid var(--border);padding:1px 6px;border-radius:999px;font-size:12px}
     .ok{color:#0f7b0f;font-weight:700}.no{color:#999}.score{font-weight:700}
     .empty{padding:20px;text-align:center;color:var(--muted)}
-    /* 行動清單抽屜 */
+    /* 行動抽屜清單 */
     .drawer{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;z-index:30}
     .drawer.active{display:block}
     .drawer .panel{position:absolute;bottom:0;left:0;right:0;background:#fff;border-radius:16px 16px 0 0;max-height:85vh;overflow:auto;padding:12px 12px 20px}
@@ -42,11 +39,7 @@
   </style>
 </head>
 <body>
-  <header>
-    <div class="wrap">
-      <p class="title">嬰幼兒友善設施全覽</p>
-    </div>
-  </header>
+  <header><div class="wrap"><p class="title">嬰幼兒友善設施全覽</p></div></header>
 
   <main class="wrap">
     <section class="filters" aria-label="篩選條件">
@@ -98,6 +91,7 @@
         <tbody></tbody>
       </table>
       <div id="emptyHint" class="empty" style="display:none;">沒有符合的結果，請調整篩選條件或清除全部。</div>
+      <div id="loadError" class="empty" style="display:none;color:#b00020;"></div>
     </section>
 
     <footer class="muted" style="margin:24px 0 80px;">資料以官方公告與現場標示為準；若有更新歡迎回報。</footer>
@@ -115,30 +109,32 @@
   </div>
 
 <script>
-/* ---- 資料與評分 ---- */
 const IND_KEYS=["stroller","nursing","diaper","hotwater","elevator","queue","play"];
 function calcScore(item){const t=IND_KEYS.reduce((a,k)=>a+(item.indicators?.[k]?1:0),0);return Math.round((t/IND_KEYS.length)*50)/10;}
 function cellYN(v){return v?'<span class="ok">✓</span>':'<span class="no">—</span>';}
 
-/* ---- 狀態 ---- */
+// 狀態
 const state={data:[],filters:{}};
 
-/* ---- 載入資料（含防呆）---- */
+// 載入資料（含錯誤顯示）
 async function loadData(){
+  const errBox=document.getElementById('loadError');
   try{
     const res=await fetch('data/facilities.json?ts='+Date.now());
     if(!res.ok) throw new Error('HTTP '+res.status);
-    state.data=await res.json();
-    // 預設清空所有篩選，避免首次載入 0 筆
-    resetAll(true);
+    const json=await res.json();
+    if(!Array.isArray(json)) throw new Error('資料格式錯誤，需為陣列');
+    state.data=json;
+    resetAll(true); // 初始清空條件
     render();
   }catch(err){
-    console.error('資料載入失敗：',err);
-    document.getElementById('countNote').textContent='資料載入失敗，請確認 data/facilities.json 是否放在 /data/ 資料夾。';
+    console.error(err);
+    errBox.style.display='block';
+    errBox.textContent='資料載入失敗：請確認 /data/facilities.json 是否存在且可公開讀取。';
   }
 }
 
-/* ---- 取得與套用篩選 ---- */
+// 取得/套用篩選
 function getFilters(){
   const map={}; document.querySelectorAll('.pillset input[type="checkbox"]').forEach(cb=>map[cb.dataset.k]=cb.checked);
   state.filters={
@@ -163,7 +159,7 @@ function matches(item){
 }
 function currentFiltered(){ getFilters(); return state.data.filter(matches); }
 
-/* ---- 渲染 ---- */
+// 渲染表格
 function render(){
   const tbody=document.querySelector('#table tbody');
   const empty=document.getElementById('emptyHint');
@@ -184,8 +180,9 @@ function render(){
   });
 }
 
-/* ---- 互動 ---- */
-['regionSelect','citySelect','categorySelect','keywordInput'].forEach(id=>document.getElementById(id).addEventListener('input',render));
+// 互動事件：select 用 change；文字用 input
+['regionSelect','citySelect','categorySelect'].forEach(id=>document.getElementById(id).addEventListener('change',render));
+document.getElementById('keywordInput').addEventListener('input',render);
 document.querySelectorAll('.pillset input[type="checkbox"]').forEach(cb=>cb.addEventListener('change',render));
 
 function resetAll(silent){
@@ -198,7 +195,7 @@ function resetAll(silent){
 }
 document.getElementById('resetBtn').addEventListener('click',()=>resetAll());
 
-/* ---- 行動清單 ---- */
+// 行動清單
 const drawer=document.getElementById('drawer');
 document.getElementById('showListBtn').addEventListener('click',()=>{drawer.classList.add('active');renderList();});
 document.getElementById('closeDrawer').addEventListener('click',()=>drawer.classList.remove('active'));
@@ -230,7 +227,7 @@ function renderList(){
   }).join('');
 }
 
-/* ---- 啟動 ---- */
+// 啟動
 loadData();
 </script>
 </body>
