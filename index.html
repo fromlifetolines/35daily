@@ -1,416 +1,586 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>嬰幼兒友善設施全覽</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f9f9f9;
-      color: #333;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background: #f0f0f0;
-      padding: 1rem;
-      text-align: center;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 1.5rem;
-    }
-    .filters {
-      background: #f0f0f0;
-      padding: 0.5rem 1rem;
-    }
-    .filter-controls,
-    .filter-indicators {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.5rem;
-    }
-    .filter-controls label {
-      margin-right: 0.5rem;
-      white-space: nowrap;
-    }
-    .filter-controls input[type="text"] {
-      padding: 0.2rem;
-      line-height: 1.5;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    .filter-controls select {
-      padding: 0.2rem;
-      line-height: 1.5;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      background-color: #fff;
-    }
-    .filter-controls button {
-      padding: 0.3rem 0.6rem;
-      border: 1px solid #aaa;
-      border-radius: 4px;
-      background: #e0e0e0;
-      cursor: pointer;
-    }
-    .filter-controls button:hover {
-      background: #d0d0d0;
-    }
-    .filter-indicators label {
-      margin-right: 1rem;
-      white-space: nowrap;
-      font-size: 0.9rem;
-    }
-    .filter-indicators input[type="checkbox"] {
-      margin-right: 0.2rem;
-    }
-    #results {
-      padding: 1rem;
-    }
-    /* Card view styles */
-    #results .result-item {
-      background: #fff;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      padding: 0.5rem 0.8rem;
-      margin-bottom: 0.5rem;
-    }
-    #results .facility-name {
-      margin: 0;
-      font-size: 1.1rem;
-    }
-    #results .facility-name small {
-      font-weight: normal;
-      color: #666;
-      margin-left: 0.2rem;
-    }
-    #results .location-category,
-    #results .features,
-    #results .source-link {
-      margin: 0.2rem 0;
-      font-size: 0.9rem;
-    }
-    #results .source-link a {
-      color: #0066cc;
-      text-decoration: none;
-    }
-    #results .source-link a:hover {
-      text-decoration: underline;
-    }
-    /* List view styles */
-    #results.list-view .result-item {
-      border: none;
-      border-bottom: 1px solid #ccc;
-      border-radius: 0;
-      padding: 0.3rem 0;
-      background: none;
-    }
-    #results.list-view .result-item:last-child {
-      border-bottom: none;
-    }
-    #results.list-view .facility-name,
-    #results.list-view .location-category,
-    #results.list-view .features,
-    #results.list-view .source-link {
-      display: inline;
-      margin: 0;
-      font-size: 0.9rem;
-    }
-    #results.list-view .facility-name {
-      font-weight: bold;
-      font-size: 1rem;
-    }
-    #results.list-view .facility-name small {
-      font-weight: normal;
-      color: #666;
-    }
-    #results.list-view .location-category:before {
-      content: " | ";
-    }
-    #results.list-view .features:before {
-      content: " | ";
-    }
-    #results.list-view .source-link:before {
-      content: " | 來源: ";
-    }
-    #results.list-view .source-link a {
-      text-decoration: none;
-    }
-    .affiliate-section {
-      background: #f0f0f0;
-      padding: 1rem;
-      text-align: center;
-    }
-    .affiliate-section a {
-      color: #0066cc;
-      text-decoration: none;
-    }
-    .affiliate-section a:hover {
-      text-decoration: underline;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>嬰幼兒友善設施全覽</h1>
-  </header>
-  <div class="filters">
-    <div class="filter-controls">
-      <label for="regionSelect">地區:</label>
-      <select id="regionSelect"></select>
-      <label for="citySelect">縣市:</label>
-      <select id="citySelect"></select>
-      <label for="categorySelect">類別:</label>
-      <select id="categorySelect"></select>
-      <label for="keywordInput">關鍵字:</label>
-      <input type="text" id="keywordInput" placeholder="輸入關鍵字">
-      <button id="clearBtn">清除</button>
-      <button id="toggleViewBtn">顯示清單</button>
-    </div>
-    <div class="filter-indicators">
-      <label><input type="checkbox" class="indicator-chk" data-key="stroller">嬰兒車租借</label>
-      <label><input type="checkbox" class="indicator-chk" data-key="nursing">哺乳室</label>
-      <label><input type="checkbox" class="indicator-chk" data-key="diaper">尿布檯</label>
-      <label><input type="checkbox" class="indicator-chk" data-key="hotwater">熱水提供</label>
-      <label><input type="checkbox" class="indicator-chk" data-key="elevator">電梯</label>
-      <label><input type="checkbox" class="indicator-chk" data-key="queue">排隊禮遇</label>
-      <label><input type="checkbox" class="indicator-chk" data-key="play">遊戲區</label>
-    </div>
-  </div>
-  <div id="results"></div>
-  <div class="affiliate-section">
-    推薦商品：
-    <a href="https://shopee.tw/product/88627011/23823245035?aff_id=hstyle" target="_blank">
-      HUGGIES 好奇 小森林 嬰兒紙尿褲
-    </a>
-  </div>
-  <script>
-    let facilities = [];
-    let citiesByRegion = {};
-    let allCities = [];
-    let viewMode = "card";
-    fetch("/data/facilities.json")
-      .then(response => response.json())
-      .then(data => {
-        facilities = data;
-        initializeFilters();
-        updateResults();  // initial display
-      })
-      .catch(error => {
-        console.error("資料載入失敗:", error);
-      });
-    function initializeFilters() {
-      const regionSelect = document.getElementById("regionSelect");
-      const citySelect = document.getElementById("citySelect");
-      const categorySelect = document.getElementById("categorySelect");
-      const regions = new Set();
-      const cities = new Set();
-      const categories = new Set();
-      facilities.forEach(item => {
-        regions.add(item.region);
-        cities.add(item.city);
-        categories.add(item.category);
-        if (!citiesByRegion[item.region]) {
-          citiesByRegion[item.region] = new Set();
-        }
-        citiesByRegion[item.region].add(item.city);
-      });
-      let regionList = Array.from(regions);
-      const regionOrder = ["北部","中部","南部","東部","其他","離島"];
-      regionList.sort((a, b) => {
-        const ai = regionOrder.indexOf(a);
-        const bi = regionOrder.indexOf(b);
-        if (ai !== -1 || bi !== -1) {
-          return (ai === -1 ? Infinity : ai) - (bi === -1 ? Infinity : bi);
-        }
-        return a.localeCompare(b);
-      });
-      regionSelect.innerHTML = "<option value=''>全部地區</option>";
-      regionList.forEach(region => {
-        const opt = document.createElement("option");
-        opt.value = region;
-        opt.textContent = region;
-        regionSelect.appendChild(opt);
-      });
-      allCities = Array.from(cities).sort((a, b) => a.localeCompare(b));
-      citySelect.innerHTML = "<option value=''>全部縣市</option>";
-      allCities.forEach(city => {
-        const opt = document.createElement("option");
-        opt.value = city;
-        opt.textContent = city;
-        citySelect.appendChild(opt);
-      });
-      const categoryList = Array.from(categories).sort((a, b) => a.localeCompare(b));
-      categorySelect.innerHTML = "<option value=''>全部類別</option>";
-      categoryList.forEach(cat => {
-        const opt = document.createElement("option");
-        opt.value = cat;
-        opt.textContent = cat;
-        categorySelect.appendChild(opt);
-      });
-      regionSelect.addEventListener("change", () => {
-        populateCityOptions(regionSelect.value);
-        updateResults();
-      });
-      citySelect.addEventListener("change", updateResults);
-      categorySelect.addEventListener("change", updateResults);
-      document.getElementById("keywordInput").addEventListener("input", updateResults);
-      document.querySelectorAll(".indicator-chk").forEach(chk => {
-        chk.addEventListener("change", updateResults);
-      });
-      document.getElementById("clearBtn").addEventListener("click", () => {
-        regionSelect.value = "";
-        populateCityOptions("");
-        citySelect.value = "";
-        categorySelect.value = "";
-        document.getElementById("keywordInput").value = "";
-        document.querySelectorAll(".indicator-chk").forEach(chk => chk.checked = false);
-        viewMode = "card";
-        document.getElementById("results").classList.remove("list-view");
-        document.getElementById("toggleViewBtn").textContent = "顯示清單";
-        updateResults();
-      });
-      document.getElementById("toggleViewBtn").addEventListener("click", () => {
-        const resultsDiv = document.getElementById("results");
-        if (viewMode === "card") {
-          viewMode = "list";
-          resultsDiv.classList.add("list-view");
-          document.getElementById("toggleViewBtn").textContent = "卡片模式";
-        } else {
-          viewMode = "card";
-          resultsDiv.classList.remove("list-view");
-          document.getElementById("toggleViewBtn").textContent = "顯示清單";
-        }
-        updateResults();
-      });
-    }
-    function populateCityOptions(region) {
-      const citySelect = document.getElementById("citySelect");
-      citySelect.innerHTML = "<option value=''>全部縣市</option>";
-      if (region && citiesByRegion[region]) {
-        Array.from(citiesByRegion[region]).sort((a, b) => a.localeCompare(b)).forEach(city => {
-          const opt = document.createElement("option");
-          opt.value = city;
-          opt.textContent = city;
-          citySelect.appendChild(opt);
-        });
-      } else {
-        allCities.forEach(city => {
-          const opt = document.createElement("option");
-          opt.value = city;
-          opt.textContent = city;
-          citySelect.appendChild(opt);
-        });
-      }
-    }
-    function updateResults() {
-      const regionValue = document.getElementById("regionSelect").value;
-      const cityValue = document.getElementById("citySelect").value;
-      const categoryValue = document.getElementById("categorySelect").value;
-      const keywordValue = document.getElementById("keywordInput").value.trim().toLowerCase();
-      const requiredIndicators = Array.from(document.querySelectorAll(".indicator-chk:checked")).map(chk => chk.getAttribute("data-key"));
-      const resultsDiv = document.getElementById("results");
-      resultsDiv.innerHTML = "";
-      let count = 0;
-      facilities.forEach(item => {
-        if (regionValue && item.region !== regionValue) return;
-        if (cityValue && item.city !== cityValue) return;
-        if (categoryValue && item.category !== categoryValue) return;
-        if (keywordValue) {
-          const text = (item.name + " " + item.city + " " + item.category).toLowerCase();
-          if (text.indexOf(keywordValue) === -1) return;
-        }
-        for (let key of requiredIndicators) {
-          if (!item.indicators[key]) return;
-        }
-        const resultItem = document.createElement("div");
-        resultItem.className = "result-item";
-        if (viewMode === "card") {
-          const nameEl = document.createElement("h3");
-          nameEl.className = "facility-name";
-          nameEl.textContent = item.name;
-          if (item.floor) {
-            const floorSmall = document.createElement("small");
-            floorSmall.textContent = item.floor;
-            nameEl.appendChild(document.createTextNode(" "));
-            nameEl.appendChild(floorSmall);
-          }
-          resultItem.appendChild(nameEl);
-          const locEl = document.createElement("p");
-          locEl.className = "location-category";
-          locEl.textContent = item.region + " / " + item.city + "，類別：" + item.category;
-          resultItem.appendChild(locEl);
-          const featuresEl = document.createElement("p");
-          featuresEl.className = "features";
-          const featureList = [];
-          if (item.indicators.stroller) featureList.push("嬰兒車租借");
-          if (item.indicators.nursing) featureList.push("哺乳室");
-          if (item.indicators.diaper) featureList.push("尿布檯");
-          if (item.indicators.hotwater) featureList.push("熱水提供");
-          if (item.indicators.elevator) featureList.push("電梯");
-          if (item.indicators.queue) featureList.push("排隊禮遇");
-          if (item.indicators.play) featureList.push("遊戲區");
-          if (featureList.length > 0) {
-            featuresEl.textContent = "提供: " + featureList.join("、 ");
-          } else {
-            featuresEl.textContent = "無特殊設施";
-          }
-          resultItem.appendChild(featuresEl);
-          const sourceEl = document.createElement("p");
-          sourceEl.className = "source-link";
-          sourceEl.textContent = "資料來源：";
-          const link = document.createElement("a");
-          link.href = item.source;
-          link.textContent = "詳情";
-          link.target = "_blank";
-          sourceEl.appendChild(link);
-          resultItem.appendChild(sourceEl);
-        } else {
-          const nameEl = document.createElement("span");
-          nameEl.className = "facility-name";
-          nameEl.textContent = item.name;
-          if (item.floor) {
-            const floorSmall = document.createElement("small");
-            floorSmall.textContent = " (" + item.floor + ")";
-            nameEl.appendChild(floorSmall);
-          }
-          resultItem.appendChild(nameEl);
-          const locCatEl = document.createElement("span");
-          locCatEl.className = "location-category";
-          locCatEl.textContent = item.region + "/" + item.city + " " + item.category;
-          resultItem.appendChild(locCatEl);
-          const featEl = document.createElement("span");
-          featEl.className = "features";
-          const feats = [];
-          if (item.indicators.stroller) feats.push("嬰兒車租借");
-          if (item.indicators.nursing) feats.push("哺乳室");
-          if (item.indicators.diaper) feats.push("尿布檯");
-          if (item.indicators.hotwater) feats.push("熱水提供");
-          if (item.indicators.elevator) feats.push("電梯");
-          if (item.indicators.queue) feats.push("排隊禮遇");
-          if (item.indicators.play) feats.push("遊戲區");
-          featEl.textContent = feats.length ? feats.join("、 ") : "無特殊設施";
-          resultItem.appendChild(featEl);
-          const srcEl = document.createElement("span");
-          srcEl.className = "source-link";
-          const link = document.createElement("a");
-          link.href = item.source;
-          link.textContent = "詳情";
-          link.target = "_blank";
-          srcEl.appendChild(link);
-          resultItem.appendChild(srcEl);
-        }
-        resultsDiv.appendChild(resultItem);
-        count++;
-      });
-      if (count === 0) {
-        resultsDiv.textContent = "未找到符合條件的結果。";
-      }
-    }
-  </script>
-</body>
-</html>
+diff --git a/facilities-data.js b/facilities-data.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..67cf30280a9a1e44696e4b004bcfc6289fd874f1
+--- /dev/null
++++ b/facilities-data.js
+@@ -0,0 +1,580 @@
++window.FACILITIES_DATA = [
++  {
++    "region": "北部",
++    "city": "台北市",
++    "category": "百貨公司",
++    "name": "新光三越 台北信義 A8",
++    "floor": "4F",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": true,
++      "elevator": true,
++      "queue": true,
++      "play": false
++    },
++    "source": "https://jumpingsugar.com/blog/post/skm-nurseryroom"
++  },
++  {
++    "region": "北部",
++    "city": "台北市",
++    "category": "百貨公司",
++    "name": "遠東 SOGO 忠孝館",
++    "floor": "5F",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": true,
++      "elevator": true,
++      "queue": false,
++      "play": true
++    },
++    "source": "https://info.sogo.com.tw/tp1/floors/18013109060347"
++  },
++  {
++    "region": "北部",
++    "city": "台北市",
++    "category": "百貨公司",
++    "name": "遠百信義 A13",
++    "floor": "5F",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": true,
++      "elevator": true,
++      "queue": true,
++      "play": false
++    },
++    "source": "https://www.feds.com.tw"
++  },
++  {
++    "region": "北部",
++    "city": "新北市",
++    "category": "購物中心/Outlet",
++    "name": "林口三井 Outlet I 館",
++    "floor": "1F/2F/GF",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": false,
++      "elevator": true,
++      "queue": false,
++      "play": true
++    },
++    "source": "https://www.mitsui-shopping-park.com.tw/mop/linkou/tw/service.html"
++  },
++  {
++    "region": "北部",
++    "city": "新北市",
++    "category": "購物中心/Outlet",
++    "name": "林口三井 Outlet II 館",
++    "floor": "3F",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": false,
++      "elevator": true,
++      "queue": false,
++      "play": true
++    },
++    "source": "https://www.mitsui-shopping-park.com.tw/mop/linkou/tw/service.html"
++  },
++  {
++    "region": "北部",
++    "city": "桃園市",
++    "category": "購物中心/Outlet",
++    "name": "華泰名品城",
++    "floor": "多處（廁所區附近）",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": true,
++      "elevator": true,
++      "queue": true,
++      "play": false
++    },
++    "source": "https://www.gloriaoutlets.com"
++  },
++  {
++    "region": "北部",
++    "city": "桃園市",
++    "category": "購物中心/Outlet",
++    "name": "台茂購物中心",
++    "floor": "1F/3F",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": true,
++      "elevator": true,
++      "queue": true,
++      "play": true
++    },
++    "source": "https://www.taimall.com.tw"
++  },
++  {
++    "region": "北部",
++    "city": "桃園市",
++    "category": "購物中心/Outlet",
++    "name": "A19 環球購物中心",
++    "floor": "2F 附近",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": true,
++      "elevator": true,
++      "queue": false,
++      "play": false
++    },
++    "source": "https://www.globalmall.com.tw/venue/a19"
++  },
++  {
++    "region": "北部",
++    "city": "台北市",
++    "category": "賣場/超市",
++    "name": "IKEA 敦北店",
++    "floor": "1F/2F 家庭室",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": true,
++      "elevator": true,
++      "queue": false,
++      "play": true
++    },
++    "source": ""
++  },
++  {
++    "region": "北部",
++    "city": "台北市",
++    "category": "賣場/超市",
++    "name": "COSTCO 內湖店",
++    "floor": "1F",
++    "indicators": {
++      "stroller": true,
++      "nursing": false,
++      "diaper": true,
++      "hotwater": false,
++      "elevator": true,
++      "queue": false,
++      "play": false
++    },
++    "source": ""
++  },
++  {
++    "region": "北部",
++    "city": "台北市",
++    "category": "捷運",
++    "name": "台北捷運 台北車站",
++    "floor": "站內",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": true,
++      "elevator": true,
++      "queue": false,
++      "play": false
++    },
++    "source": "https://www.metro.taipei"
++  },
++  {
++    "region": "北部",
++    "city": "新北市",
++    "category": "捷運",
++    "name": "新北捷運 環狀線 板橋站",
++    "floor": "站內",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": true,
++      "elevator": true,
++      "queue": false,
++      "play": false
++    },
++    "source": "https://www.dorts.ntpc.gov.tw"
++  },
++  {
++    "region": "北部",
++    "city": "桃園市",
++    "category": "機場",
++    "name": "桃園國際機場 第1航廈",
++    "floor": "多處主題哺乳室",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": true,
++      "elevator": true,
++      "queue": true,
++      "play": true
++    },
++    "source": "https://www.taoyuan-airport.com/"
++  },
++  {
++    "region": "北部",
++    "city": "桃園市",
++    "category": "機場",
++    "name": "桃園國際機場 第2航廈",
++    "floor": "多處主題哺乳室",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": true,
++      "elevator": true,
++      "queue": true,
++      "play": true
++    },
++    "source": "https://www.taoyuan-airport.com/"
++  },
++  {
++    "region": "北部",
++    "city": "台北市",
++    "category": "機場捷運",
++    "name": "桃園機場捷運 A1 台北車站",
++    "floor": "站內",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": true,
++      "elevator": true,
++      "queue": false,
++      "play": false
++    },
++    "source": "https://www.tymetro.com.tw/"
++  },
++  {
++    "region": "北部",
++    "city": "桃園市",
++    "category": "機場捷運",
++    "name": "桃園機場捷運 A12 機場第一航廈",
++    "floor": "站內",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": true,
++      "elevator": true,
++      "queue": false,
++      "play": false
++    },
++    "source": "https://www.tymetro.com.tw/"
++  },
++  {
++    "region": "北部",
++    "city": "桃園市",
++    "category": "機場捷運",
++    "name": "桃園機場捷運 A13 機場第二航廈",
++    "floor": "站內",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": true,
++      "elevator": true,
++      "queue": false,
++      "play": false
++    },
++    "source": "https://www.tymetro.com.tw/"
++  },
++  {
++    "region": "北部",
++    "city": "台北市",
++    "category": "高鐵",
++    "name": "台灣高鐵 台北站",
++    "floor": "站內指定室",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": true,
++      "elevator": true,
++      "queue": false,
++      "play": false
++    },
++    "source": "https://www.thsrc.com.tw"
++  },
++  {
++    "region": "北部",
++    "city": "桃園市",
++    "category": "高鐵",
++    "name": "台灣高鐵 桃園站",
++    "floor": "站內指定室",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": true,
++      "elevator": true,
++      "queue": false,
++      "play": false
++    },
++    "source": "https://www.thsrc.com.tw"
++  },
++  {
++    "region": "北部",
++    "city": "台北市",
++    "category": "公園/圖書館/親子館",
++    "name": "台北市立圖書館 總館",
++    "floor": "親子室",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": false,
++      "elevator": true,
++      "queue": false,
++      "play": true
++    },
++    "source": ""
++  },
++  {
++    "region": "中部",
++    "city": "台中市",
++    "category": "百貨公司",
++    "name": "新光三越 台中中港店",
++    "floor": "6F",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": true,
++      "elevator": true,
++      "queue": true,
++      "play": true
++    },
++    "source": "https://www.skm.com.tw"
++  },
++  {
++    "region": "中部",
++    "city": "台中市",
++    "category": "百貨公司",
++    "name": "台中大遠百 Top City",
++    "floor": "5F",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": true,
++      "elevator": true,
++      "queue": true,
++      "play": false
++    },
++    "source": "https://www.feds.com.tw"
++  },
++  {
++    "region": "中部",
++    "city": "台中市",
++    "category": "購物中心/Outlet",
++    "name": "大魯閣新時代",
++    "floor": "6F",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": true,
++      "elevator": true,
++      "queue": false,
++      "play": false
++    },
++    "source": "https://taichung.trkmall.com.tw"
++  },
++  {
++    "region": "中部",
++    "city": "台中市",
++    "category": "購物中心/Outlet",
++    "name": "麗寶 Outlet Mall",
++    "floor": "公共區域",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": true,
++      "elevator": true,
++      "queue": false,
++      "play": true
++    },
++    "source": "https://www.lihpaoland.com"
++  },
++  {
++    "region": "中部",
++    "city": "台中市",
++    "category": "百貨公司",
++    "name": "中友百貨（C棟）",
++    "floor": "7F",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": true,
++      "elevator": true,
++      "queue": true,
++      "play": true
++    },
++    "source": "https://www.chungyo.com.tw"
++  },
++  {
++    "region": "中部",
++    "city": "台中市",
++    "category": "高鐵",
++    "name": "台灣高鐵 台中站",
++    "floor": "站內指定室",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": true,
++      "elevator": true,
++      "queue": false,
++      "play": false
++    },
++    "source": "https://www.thsrc.com.tw"
++  },
++  {
++    "region": "中部",
++    "city": "台中市",
++    "category": "公園/圖書館/親子館",
++    "name": "台中兒童青少年圖書館",
++    "floor": "館內親子區",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": false,
++      "elevator": true,
++      "queue": false,
++      "play": true
++    },
++    "source": ""
++  },
++  {
++    "region": "南部",
++    "city": "高雄市",
++    "category": "購物中心/Outlet",
++    "name": "高雄 夢時代購物中心",
++    "floor": "5F 兒童王國",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": true,
++      "elevator": true,
++      "queue": true,
++      "play": true
++    },
++    "source": "https://www.mombaby.com.tw/articles/209"
++  },
++  {
++    "region": "南部",
++    "city": "高雄市",
++    "category": "百貨公司",
++    "name": "漢神巨蛋",
++    "floor": "6F",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": true,
++      "elevator": true,
++      "queue": true,
++      "play": false
++    },
++    "source": "https://www.hanshin.com.tw"
++  },
++  {
++    "region": "南部",
++    "city": "高雄市",
++    "category": "購物中心/Outlet",
++    "name": "義大世界購物廣場",
++    "floor": "A區2F/C區2F",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": true,
++      "elevator": true,
++      "queue": true,
++      "play": true
++    },
++    "source": "https://www.edamall.com.tw"
++  },
++  {
++    "region": "南部",
++    "city": "高雄市",
++    "category": "景點",
++    "name": "駁二藝術特區（棧貳庫）",
++    "floor": "2F",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": true,
++      "elevator": true,
++      "queue": false,
++      "play": false
++    },
++    "source": "https://www.facebook.com/Pier2Art"
++  },
++  {
++    "region": "南部",
++    "city": "台南市",
++    "category": "百貨公司",
++    "name": "新光三越 台南新天地",
++    "floor": "親子層/服務台附近",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": true,
++      "elevator": true,
++      "queue": true,
++      "play": true
++    },
++    "source": "https://www.skm.com.tw"
++  },
++  {
++    "region": "南部",
++    "city": "台南市",
++    "category": "高鐵",
++    "name": "台灣高鐵 台南站",
++    "floor": "站內指定室",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": true,
++      "elevator": true,
++      "queue": false,
++      "play": false
++    },
++    "source": "https://www.thsrc.com.tw"
++  },
++  {
++    "region": "南部",
++    "city": "高雄市",
++    "category": "高鐵",
++    "name": "台灣高鐵 左營站",
++    "floor": "站內指定室",
++    "indicators": {
++      "stroller": true,
++      "nursing": true,
++      "diaper": true,
++      "hotwater": true,
++      "elevator": true,
++      "queue": false,
++      "play": false
++    },
++    "source": "https://www.thsrc.com.tw"
++  }
++];
