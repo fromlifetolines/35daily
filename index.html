@@ -1,313 +1,416 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>嬰幼兒友善設施全覽</title>
-
-  <!-- 若要啟用 AdSense：把以下 content 改成你的實際值（否則廣告區會自動隱藏） -->
-  <meta name="adsense-client" content="ca-pub-XXXX">
-  <meta name="adsense-slot-top" content="YYYY">
-  <meta name="adsense-slot-infeed" content="ZZZZ">
-
   <style>
-    :root{--bg:#f6f7f8;--card:#fff;--brand:#2b2f36;--accent:#4a90e2;--muted:#8a8f98;--border:#e6e8eb}
-    *{box-sizing:border-box}
-    body{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue","PingFang TC","Microsoft JhengHei",Arial,sans-serif;background:var(--bg);margin:0;color:var(--brand);line-height:1.5}
-    header{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
-    .wrap{max-width:1200px;margin:0 auto;padding:12px 16px}
-    .title{font-size:20px;font-weight:700;margin:0}
-    .filters{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:10px}
-    .filters select,.filters input{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:#fff}
-    .actions{display:flex;gap:8px;align-items:center}
-    .btn{padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:#fff;cursor:pointer;font-size:14px}
-    .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
-    .pillset{display:flex;flex-wrap:wrap;gap:6px;grid-column:1 / -1}
-    .pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);padding:6px 10px;border-radius:999px;font-size:13px;background:#fff}
-    .muted{color:var(--muted);font-size:12px}
-    table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:10px}
-    thead th{background:#fafbfc;font-weight:600;font-size:13px;padding:10px;border-bottom:1px solid var(--border);position:sticky;top:92px;z-index:5}
-    tbody td{border-top:1px solid var(--border);font-size:13px;padding:10px;text-align:center}
-    tbody tr:nth-child(even) td{background:#fcfcfd}
-    .tag{background:#f1f3f5;border:1px solid var(--border);padding:1px 6px;border-radius:999px;font-size:12px}
-    .ok{color:#0f7b0f;font-weight:700}.no{color:#999}.score{font-weight:700}
-    .empty{padding:20px;text-align:center;color:var(--muted)}
-    /* 行動抽屜清單 */
-    .drawer{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;z-index:30}
-    .drawer.active{display:block}
-    .drawer .panel{position:absolute;bottom:0;left:0;right:0;background:#fff;border-radius:16px 16px 0 0;max-height:85vh;overflow:auto;padding:12px 12px 20px}
-    .list-card{border:1px solid var(--border);border-radius:12px;padding:10px;margin:8px 0}
-    .list-title{margin:0 0 6px;font-weight:600}
-    .badges span{display:inline-block;background:#f1f3f5;border:1px solid var(--border);border-radius:999px;padding:2px 8px;font-size:12px;margin-right:6px;margin-bottom:6px}
-    .badge-yes{border-color:#cce5cc;background:#eef8ee;color:#0f7b0f}
-    .badge-no{color:#888}
-    /* Shopee 導購 chips */
-    .chips{display:flex;gap:8px;overflow:auto;padding:8px 0}
-    .chip{white-space:nowrap;border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 12px;font-size:14px;text-decoration:none}
-    .chip:link,.chip:visited{color:#1a73e8}
-    /* AdSense 容器：未設定時不顯示 */
-    .ads{display:none;margin:10px 0}
-    .ads.active{display:block}
-    @media (max-width:960px){.filters{grid-template-columns:1fr 1fr} thead th{top:140px}}
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #f0f0f0;
+      padding: 1rem;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    .filters {
+      background: #f0f0f0;
+      padding: 0.5rem 1rem;
+    }
+    .filter-controls,
+    .filter-indicators {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .filter-controls label {
+      margin-right: 0.5rem;
+      white-space: nowrap;
+    }
+    .filter-controls input[type="text"] {
+      padding: 0.2rem;
+      line-height: 1.5;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .filter-controls select {
+      padding: 0.2rem;
+      line-height: 1.5;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: #fff;
+    }
+    .filter-controls button {
+      padding: 0.3rem 0.6rem;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      background: #e0e0e0;
+      cursor: pointer;
+    }
+    .filter-controls button:hover {
+      background: #d0d0d0;
+    }
+    .filter-indicators label {
+      margin-right: 1rem;
+      white-space: nowrap;
+      font-size: 0.9rem;
+    }
+    .filter-indicators input[type="checkbox"] {
+      margin-right: 0.2rem;
+    }
+    #results {
+      padding: 1rem;
+    }
+    /* Card view styles */
+    #results .result-item {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 0.5rem 0.8rem;
+      margin-bottom: 0.5rem;
+    }
+    #results .facility-name {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+    #results .facility-name small {
+      font-weight: normal;
+      color: #666;
+      margin-left: 0.2rem;
+    }
+    #results .location-category,
+    #results .features,
+    #results .source-link {
+      margin: 0.2rem 0;
+      font-size: 0.9rem;
+    }
+    #results .source-link a {
+      color: #0066cc;
+      text-decoration: none;
+    }
+    #results .source-link a:hover {
+      text-decoration: underline;
+    }
+    /* List view styles */
+    #results.list-view .result-item {
+      border: none;
+      border-bottom: 1px solid #ccc;
+      border-radius: 0;
+      padding: 0.3rem 0;
+      background: none;
+    }
+    #results.list-view .result-item:last-child {
+      border-bottom: none;
+    }
+    #results.list-view .facility-name,
+    #results.list-view .location-category,
+    #results.list-view .features,
+    #results.list-view .source-link {
+      display: inline;
+      margin: 0;
+      font-size: 0.9rem;
+    }
+    #results.list-view .facility-name {
+      font-weight: bold;
+      font-size: 1rem;
+    }
+    #results.list-view .facility-name small {
+      font-weight: normal;
+      color: #666;
+    }
+    #results.list-view .location-category:before {
+      content: " | ";
+    }
+    #results.list-view .features:before {
+      content: " | ";
+    }
+    #results.list-view .source-link:before {
+      content: " | 來源: ";
+    }
+    #results.list-view .source-link a {
+      text-decoration: none;
+    }
+    .affiliate-section {
+      background: #f0f0f0;
+      padding: 1rem;
+      text-align: center;
+    }
+    .affiliate-section a {
+      color: #0066cc;
+      text-decoration: none;
+    }
+    .affiliate-section a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
-  <header><div class="wrap"><p class="title">嬰幼兒友善設施全覽</p></div></header>
-
-  <main class="wrap">
-
-    <!-- 置頂 AdSense（自動隱藏，除非你在 <meta> 放入真實 client/slot） -->
-    <div id="adTop" class="ads"></div>
-
-    <section class="filters" aria-label="篩選條件">
-      <select id="regionSelect" aria-label="選擇地區">
-        <option value="">全部地區</option>
-        <option>北部</option><option>中部</option><option>南部</option><option>東部</option><option>離島</option>
-      </select>
-      <select id="citySelect" aria-label="選擇縣市">
-        <option value="">全部縣市</option>
-        <option>台北市</option><option>新北市</option><option>基隆市</option><option>桃園市</option>
-        <option>新竹市</option><option>新竹縣</option><option>苗栗縣</option>
-        <option>台中市</option><option>彰化縣</option><option>南投縣</option><option>雲林縣</option>
-        <option>嘉義市</option><option>嘉義縣</option><option>台南市</option><option>高雄市</option><option>屏東縣</option>
-        <option>宜蘭縣</option><option>花蓮縣</option><option>台東縣</option>
-        <option>金門縣</option><option>澎湖縣</option><option>連江縣</option>
-      </select>
-      <select id="categorySelect" aria-label="選擇類別">
-        <option value="">全部類別</option>
-        <option>百貨公司</option><option>購物中心/Outlet</option><option>賣場/超市</option>
-        <option>捷運</option><option>機場</option><option>機場捷運</option><option>高鐵</option>
-        <option>景點</option><option>飯店</option><option>城市公共設施</option><option>公園/圖書館/親子館</option>
-      </select>
-      <input id="keywordInput" type="text" placeholder="輸入關鍵字（場所/樓層/特色…）" />
-      <div class="actions">
-        <button id="resetBtn" class="btn" title="清除所有篩選條件">清除</button>
-        <button id="showListBtn" class="btn primary">顯示清單</button>
-      </div>
-      <div class="pillset" aria-label="設施指標篩選">
-        <label class="pill"><input type="checkbox" data-k="stroller" /> 推車友善</label>
-        <label class="pill"><input type="checkbox" data-k="nursing" /> 哺乳室</label>
-        <label class="pill"><input type="checkbox" data-k="diaper" /> 尿布台</label>
-        <label class="pill"><input type="checkbox" data-k="hotwater" /> 微波/熱水</label>
-        <label class="pill"><input type="checkbox" data-k="elevator" /> 電梯/斜坡</label>
-        <label class="pill"><input type="checkbox" data-k="queue" /> 親子候位</label>
-        <label class="pill"><input type="checkbox" data-k="play" /> 免費親子遊戲區</label>
-      </div>
-    </section>
-
-    <p class="muted" id="countNote">資料筆數：—</p>
-
-    <section aria-label="資料表格">
-      <table id="table">
-        <thead>
-          <tr>
-            <th>地區</th><th>縣市</th><th>類別</th><th>場所</th>
-            <th>樓層/位置</th><th>設施（✓ 代表提供）</th><th>綜合評分</th><th>來源</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-      <div id="emptyHint" class="empty" style="display:none;">沒有符合的結果，請調整篩選條件或清除全部。</div>
-      <div id="loadError" class="empty" style="display:none;color:#b00020;"></div>
-    </section>
-
-    <!-- 內文 AdSense（自動顯示/隱藏） -->
-    <div id="adInfeed" class="ads"></div>
-
-    <!-- Shopee / 其他聯盟導購（不干擾主要體驗） -->
-    <section aria-label="推薦好物" style="margin:14px 0;">
-      <div class="chips" id="shopChips"></div>
-      <p class="muted">部分連結屬於推薦連結，可能產生分潤，有助支持本網站營運。</p>
-    </section>
-
-    <footer class="muted" style="margin:24px 0 80px;">資料以官方公告與現場標示為準；若有更新歡迎回報。</footer>
-  </main>
-
-  <!-- 行動清單抽屜 -->
-  <div id="drawer" class="drawer" aria-hidden="true">
-    <div class="panel">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-        <strong>目前篩選結果清單</strong>
-        <button id="closeDrawer" class="btn">關閉</button>
-      </div>
-      <div id="listContainer"></div>
+  <header>
+    <h1>嬰幼兒友善設施全覽</h1>
+  </header>
+  <div class="filters">
+    <div class="filter-controls">
+      <label for="regionSelect">地區:</label>
+      <select id="regionSelect"></select>
+      <label for="citySelect">縣市:</label>
+      <select id="citySelect"></select>
+      <label for="categorySelect">類別:</label>
+      <select id="categorySelect"></select>
+      <label for="keywordInput">關鍵字:</label>
+      <input type="text" id="keywordInput" placeholder="輸入關鍵字">
+      <button id="clearBtn">清除</button>
+      <button id="toggleViewBtn">顯示清單</button>
+    </div>
+    <div class="filter-indicators">
+      <label><input type="checkbox" class="indicator-chk" data-key="stroller">嬰兒車租借</label>
+      <label><input type="checkbox" class="indicator-chk" data-key="nursing">哺乳室</label>
+      <label><input type="checkbox" class="indicator-chk" data-key="diaper">尿布檯</label>
+      <label><input type="checkbox" class="indicator-chk" data-key="hotwater">熱水提供</label>
+      <label><input type="checkbox" class="indicator-chk" data-key="elevator">電梯</label>
+      <label><input type="checkbox" class="indicator-chk" data-key="queue">排隊禮遇</label>
+      <label><input type="checkbox" class="indicator-chk" data-key="play">遊戲區</label>
     </div>
   </div>
-
-<script>
-/* ========== 基礎設定（可修改） ========== */
-const SHOPEE_AFF_ID = "hstyle"; // 你的 Shopee 推薦者 ID
-// 可在此加入其他聯盟連結（affiliates、Rakuten、CJ 等）
-const EXTRA_AFF_LINKS = [
-  // { label: "XXX 商城尿布特價", href: "https://your-affiliate-link" },
-];
-
-/* ========== 評分與資料處理 ========== */
-const IND_KEYS=["stroller","nursing","diaper","hotwater","elevator","queue","play"];
-function calcScore(item){const t=IND_KEYS.reduce((a,k)=>a+(item.indicators?.[k]?1:0),0);return Math.round((t/IND_KEYS.length)*50)/10;}
-function cellYN(v){return v?'<span class="ok">✓</span>':'<span class="no">—</span>';}
-
-/* ========== 狀態 ========== */
-const state={data:[],filters:{}};
-
-/* ========== 載入資料（含錯誤顯示） ========== */
-async function loadData(){
-  const errBox=document.getElementById('loadError');
-  try{
-    const res=await fetch('data/facilities.json?ts='+Date.now());
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const json=await res.json();
-    if(!Array.isArray(json)) throw new Error('資料格式錯誤，需為陣列');
-    state.data=json;
-    resetAll(true); // 初始清空條件
-    render();
-    setupAffiliates();
-    setupAdSense(); // 僅在 meta 設好時啟用
-  }catch(err){
-    console.error(err);
-    errBox.style.display='block';
-    errBox.textContent='資料載入失敗：請確認 /data/facilities.json 是否存在且可公開讀取。';
-  }
-}
-
-/* ========== 取得/套用篩選 ========== */
-function getFilters(){
-  const map={}; document.querySelectorAll('.pillset input[type="checkbox"]').forEach(cb=>map[cb.dataset.k]=cb.checked);
-  state.filters={
-    region:document.getElementById('regionSelect').value.trim(),
-    city:document.getElementById('citySelect').value.trim(),
-    category:document.getElementById('categorySelect').value.trim(),
-    keyword:document.getElementById('keywordInput').value.trim().toLowerCase(),
-    indicators:map
-  };
-}
-function matches(item){
-  const f=state.filters;
-  if(f.region && item.region!==f.region) return false;
-  if(f.city && item.city!==f.city) return false;
-  if(f.category && item.category!==f.category) return false;
-  if(f.keyword){
-    const txt=(item.name+' '+(item.floor||'')+' '+(item.city||'')+' '+(item.category||'')).toLowerCase();
-    if(!txt.includes(f.keyword)) return false;
-  }
-  for(const k in f.indicators){ if(f.indicators[k] && !item.indicators?.[k]) return false; }
-  return true;
-}
-function currentFiltered(){ getFilters(); return state.data.filter(matches); }
-
-/* ========== 渲染表格 ========== */
-function render(){
-  const tbody=document.querySelector('#table tbody');
-  const empty=document.getElementById('emptyHint');
-  tbody.innerHTML='';
-  const filtered=currentFiltered();
-  document.getElementById('countNote').textContent='資料筆數：'+filtered.length;
-  empty.style.display= filtered.length? 'none':'block';
-  filtered.forEach(item=>{
-    const tr=document.createElement('tr');
-    const score=calcScore(item).toFixed(1);
-    tr.innerHTML=`
-      <td>${item.region}</td><td>${item.city}</td><td><span class="tag">${item.category}</span></td>
-      <td>${item.name}</td><td>${item.floor||'—'}</td>
-      <td style="white-space:nowrap;">${IND_KEYS.map(k=>cellYN(item.indicators?.[k])).join(' ')}</td>
-      <td class="score">${score}</td>
-      <td>${item.source?`<a href="${item.source}" target="_blank" rel="noopener">來源</a>`:'—'}</td>`;
-    tbody.appendChild(tr);
-  });
-}
-
-/* ========== 互動事件：select 用 change；文字用 input ========== */
-['regionSelect','citySelect','categorySelect'].forEach(id=>document.getElementById(id).addEventListener('change',render));
-document.getElementById('keywordInput').addEventListener('input',render);
-document.querySelectorAll('.pillset input[type="checkbox"]').forEach(cb=>cb.addEventListener('change',render));
-
-function resetAll(silent){
-  document.getElementById('regionSelect').value='';
-  document.getElementById('citySelect').value='';
-  document.getElementById('categorySelect').value='';
-  document.getElementById('keywordInput').value='';
-  document.querySelectorAll('.pillset input[type="checkbox"]').forEach(cb=>cb.checked=false);
-  if(!silent) render();
-}
-document.getElementById('resetBtn').addEventListener('click',()=>resetAll());
-
-/* ========== 行動清單 ========== */
-const drawer=document.getElementById('drawer');
-document.getElementById('showListBtn').addEventListener('click',()=>{drawer.classList.add('active');renderList();});
-document.getElementById('closeDrawer').addEventListener('click',()=>drawer.classList.remove('active'));
-drawer.addEventListener('click',e=>{if(e.target===drawer) drawer.classList.remove('active');});
-function renderList(){
-  const list=document.getElementById('listContainer');
-  const filtered=currentFiltered();
-  if(!filtered.length){ list.innerHTML='<div class="empty">目前沒有符合的結果。</div>'; return; }
-  list.innerHTML=filtered.map(item=>{
-    const ys=IND_KEYS.map(k=>item.indicators?.[k]); const score=calcScore(item).toFixed(1);
-    return `
-      <div class="list-card">
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-          <h4 class="list-title">${item.name}</h4>
-          <span class="tag">${item.category}</span>
-        </div>
-        <div class="muted">${item.region}・${item.city}・樓層：${item.floor||'—'}・評分：<strong>${score}</strong></div>
-        <div class="badges" style="margin-top:6px;">
-          <span class="${ys[0]?'badge-yes':'badge-no'}">推車</span>
-          <span class="${ys[1]?'badge-yes':'badge-no'}">哺乳室</span>
-          <span class="${ys[2]?'badge-yes':'badge-no'}">尿布台</span>
-          <span class="${ys[3]?'badge-yes':'badge-no'}">熱水</span>
-          <span class="${ys[4]?'badge-yes':'badge-no'}">電梯/斜坡</span>
-          <span class="${ys[5]?'badge-yes':'badge-no'}">親子候位</span>
-          <span class="${ys[6]?'badge-yes':'badge-no'}">遊戲區</span>
-        </div>
-        <div style="margin-top:8px;">${item.source?`<a href="${item.source}" target="_blank" rel="noopener">查看來源</a>`:'&nbsp;'}</div>
-      </div>`;
-  }).join('');
-}
-
-/* ========== Shopee / 其他聯盟連結 ========== */
-function setupAffiliates(){
-  const el=document.getElementById('shopChips');
-  const shopeeLinks=[
-    {label:"親子推車精選", q:"%E5%AF%B5%E7%AB%A5%E6%8E%A8%E8%BB%8A"},
-    {label:"奶瓶加熱/保溫", q:"%E5%AD%95%E5%A9%A6%E8%83%BD%E6%BA%AB%E7%93%B6"},
-    {label:"嬰兒背帶", q:"%E5%AC%B0%E5%85%92%E8%83%8C%E5%B8%B6"},
-    {label:"濕紙巾/外出補充包", q:"%E5%A9%B4%E5%85%92%E6%BF%95%E7%B4%99%E5%B7%BE"},
-    {label:"尿布外出包", q:"%E6%8A%A4%E7%94%A8%E8%A2%8B"}
-  ].map(x=>({
-    label:x.label,
-    href:`https://shopee.tw/search?keyword=${x.q}&aff_id=${encodeURIComponent(SHOPEE_AFF_ID)}`,
-  }));
-  const links=[...shopeeLinks, ...EXTRA_AFF_LINKS];
-  el.innerHTML = links.map(l=>`<a class="chip" href="${l.href}" target="_blank" rel="sponsored nofollow noopener">${l.label}</a>`).join('');
-}
-
-/* ========== AdSense（僅在設定了 meta 時啟用；頁面不會出現任何教學字樣） ========== */
-function setupAdSense(){
-  const client=document.querySelector('meta[name="adsense-client"]')?.content?.trim()||"";
-  const slotTop=document.querySelector('meta[name="adsense-slot-top"]')?.content?.trim()||"";
-  const slotInfeed=document.querySelector('meta[name="adsense-slot-infeed"]')?.content?.trim()||"";
-
-  if(!client.startsWith("ca-pub-")) return; // 未設定就直接跳過
-
-  // 載入腳本
-  const s=document.createElement('script');
-  s.async=true;
-  s.src=`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(client)}`;
-  s.crossOrigin="anonymous";
-  document.head.appendChild(s);
-
-  function mountAd(containerId, slot){
-    if(!slot) return;
-    const box=document.getElementById(containerId);
-    box.classList.add('active');
-    box.innerHTML=`<ins class="adsbygoogle" style="display:block" data-ad-client="${client}" data-ad-slot="${slot}" data-ad-format="auto" data-full-width-responsive="true"></ins>`;
-    (window.adsbygoogle=window.adsbygoogle||[]).push({});
-  }
-  // 等待腳本載入後掛載
-  s.onload=()=>{ mountAd('adTop', slotTop); mountAd('adInfeed', slotInfeed); };
-}
-
-/* ========== 啟動 ========== */
-loadData();
-</script>
+  <div id="results"></div>
+  <div class="affiliate-section">
+    推薦商品：
+    <a href="https://shopee.tw/product/88627011/23823245035?aff_id=hstyle" target="_blank">
+      HUGGIES 好奇 小森林 嬰兒紙尿褲
+    </a>
+  </div>
+  <script>
+    let facilities = [];
+    let citiesByRegion = {};
+    let allCities = [];
+    let viewMode = "card";
+    fetch("/data/facilities.json")
+      .then(response => response.json())
+      .then(data => {
+        facilities = data;
+        initializeFilters();
+        updateResults();  // initial display
+      })
+      .catch(error => {
+        console.error("資料載入失敗:", error);
+      });
+    function initializeFilters() {
+      const regionSelect = document.getElementById("regionSelect");
+      const citySelect = document.getElementById("citySelect");
+      const categorySelect = document.getElementById("categorySelect");
+      const regions = new Set();
+      const cities = new Set();
+      const categories = new Set();
+      facilities.forEach(item => {
+        regions.add(item.region);
+        cities.add(item.city);
+        categories.add(item.category);
+        if (!citiesByRegion[item.region]) {
+          citiesByRegion[item.region] = new Set();
+        }
+        citiesByRegion[item.region].add(item.city);
+      });
+      let regionList = Array.from(regions);
+      const regionOrder = ["北部","中部","南部","東部","其他","離島"];
+      regionList.sort((a, b) => {
+        const ai = regionOrder.indexOf(a);
+        const bi = regionOrder.indexOf(b);
+        if (ai !== -1 || bi !== -1) {
+          return (ai === -1 ? Infinity : ai) - (bi === -1 ? Infinity : bi);
+        }
+        return a.localeCompare(b);
+      });
+      regionSelect.innerHTML = "<option value=''>全部地區</option>";
+      regionList.forEach(region => {
+        const opt = document.createElement("option");
+        opt.value = region;
+        opt.textContent = region;
+        regionSelect.appendChild(opt);
+      });
+      allCities = Array.from(cities).sort((a, b) => a.localeCompare(b));
+      citySelect.innerHTML = "<option value=''>全部縣市</option>";
+      allCities.forEach(city => {
+        const opt = document.createElement("option");
+        opt.value = city;
+        opt.textContent = city;
+        citySelect.appendChild(opt);
+      });
+      const categoryList = Array.from(categories).sort((a, b) => a.localeCompare(b));
+      categorySelect.innerHTML = "<option value=''>全部類別</option>";
+      categoryList.forEach(cat => {
+        const opt = document.createElement("option");
+        opt.value = cat;
+        opt.textContent = cat;
+        categorySelect.appendChild(opt);
+      });
+      regionSelect.addEventListener("change", () => {
+        populateCityOptions(regionSelect.value);
+        updateResults();
+      });
+      citySelect.addEventListener("change", updateResults);
+      categorySelect.addEventListener("change", updateResults);
+      document.getElementById("keywordInput").addEventListener("input", updateResults);
+      document.querySelectorAll(".indicator-chk").forEach(chk => {
+        chk.addEventListener("change", updateResults);
+      });
+      document.getElementById("clearBtn").addEventListener("click", () => {
+        regionSelect.value = "";
+        populateCityOptions("");
+        citySelect.value = "";
+        categorySelect.value = "";
+        document.getElementById("keywordInput").value = "";
+        document.querySelectorAll(".indicator-chk").forEach(chk => chk.checked = false);
+        viewMode = "card";
+        document.getElementById("results").classList.remove("list-view");
+        document.getElementById("toggleViewBtn").textContent = "顯示清單";
+        updateResults();
+      });
+      document.getElementById("toggleViewBtn").addEventListener("click", () => {
+        const resultsDiv = document.getElementById("results");
+        if (viewMode === "card") {
+          viewMode = "list";
+          resultsDiv.classList.add("list-view");
+          document.getElementById("toggleViewBtn").textContent = "卡片模式";
+        } else {
+          viewMode = "card";
+          resultsDiv.classList.remove("list-view");
+          document.getElementById("toggleViewBtn").textContent = "顯示清單";
+        }
+        updateResults();
+      });
+    }
+    function populateCityOptions(region) {
+      const citySelect = document.getElementById("citySelect");
+      citySelect.innerHTML = "<option value=''>全部縣市</option>";
+      if (region && citiesByRegion[region]) {
+        Array.from(citiesByRegion[region]).sort((a, b) => a.localeCompare(b)).forEach(city => {
+          const opt = document.createElement("option");
+          opt.value = city;
+          opt.textContent = city;
+          citySelect.appendChild(opt);
+        });
+      } else {
+        allCities.forEach(city => {
+          const opt = document.createElement("option");
+          opt.value = city;
+          opt.textContent = city;
+          citySelect.appendChild(opt);
+        });
+      }
+    }
+    function updateResults() {
+      const regionValue = document.getElementById("regionSelect").value;
+      const cityValue = document.getElementById("citySelect").value;
+      const categoryValue = document.getElementById("categorySelect").value;
+      const keywordValue = document.getElementById("keywordInput").value.trim().toLowerCase();
+      const requiredIndicators = Array.from(document.querySelectorAll(".indicator-chk:checked")).map(chk => chk.getAttribute("data-key"));
+      const resultsDiv = document.getElementById("results");
+      resultsDiv.innerHTML = "";
+      let count = 0;
+      facilities.forEach(item => {
+        if (regionValue && item.region !== regionValue) return;
+        if (cityValue && item.city !== cityValue) return;
+        if (categoryValue && item.category !== categoryValue) return;
+        if (keywordValue) {
+          const text = (item.name + " " + item.city + " " + item.category).toLowerCase();
+          if (text.indexOf(keywordValue) === -1) return;
+        }
+        for (let key of requiredIndicators) {
+          if (!item.indicators[key]) return;
+        }
+        const resultItem = document.createElement("div");
+        resultItem.className = "result-item";
+        if (viewMode === "card") {
+          const nameEl = document.createElement("h3");
+          nameEl.className = "facility-name";
+          nameEl.textContent = item.name;
+          if (item.floor) {
+            const floorSmall = document.createElement("small");
+            floorSmall.textContent = item.floor;
+            nameEl.appendChild(document.createTextNode(" "));
+            nameEl.appendChild(floorSmall);
+          }
+          resultItem.appendChild(nameEl);
+          const locEl = document.createElement("p");
+          locEl.className = "location-category";
+          locEl.textContent = item.region + " / " + item.city + "，類別：" + item.category;
+          resultItem.appendChild(locEl);
+          const featuresEl = document.createElement("p");
+          featuresEl.className = "features";
+          const featureList = [];
+          if (item.indicators.stroller) featureList.push("嬰兒車租借");
+          if (item.indicators.nursing) featureList.push("哺乳室");
+          if (item.indicators.diaper) featureList.push("尿布檯");
+          if (item.indicators.hotwater) featureList.push("熱水提供");
+          if (item.indicators.elevator) featureList.push("電梯");
+          if (item.indicators.queue) featureList.push("排隊禮遇");
+          if (item.indicators.play) featureList.push("遊戲區");
+          if (featureList.length > 0) {
+            featuresEl.textContent = "提供: " + featureList.join("、 ");
+          } else {
+            featuresEl.textContent = "無特殊設施";
+          }
+          resultItem.appendChild(featuresEl);
+          const sourceEl = document.createElement("p");
+          sourceEl.className = "source-link";
+          sourceEl.textContent = "資料來源：";
+          const link = document.createElement("a");
+          link.href = item.source;
+          link.textContent = "詳情";
+          link.target = "_blank";
+          sourceEl.appendChild(link);
+          resultItem.appendChild(sourceEl);
+        } else {
+          const nameEl = document.createElement("span");
+          nameEl.className = "facility-name";
+          nameEl.textContent = item.name;
+          if (item.floor) {
+            const floorSmall = document.createElement("small");
+            floorSmall.textContent = " (" + item.floor + ")";
+            nameEl.appendChild(floorSmall);
+          }
+          resultItem.appendChild(nameEl);
+          const locCatEl = document.createElement("span");
+          locCatEl.className = "location-category";
+          locCatEl.textContent = item.region + "/" + item.city + " " + item.category;
+          resultItem.appendChild(locCatEl);
+          const featEl = document.createElement("span");
+          featEl.className = "features";
+          const feats = [];
+          if (item.indicators.stroller) feats.push("嬰兒車租借");
+          if (item.indicators.nursing) feats.push("哺乳室");
+          if (item.indicators.diaper) feats.push("尿布檯");
+          if (item.indicators.hotwater) feats.push("熱水提供");
+          if (item.indicators.elevator) feats.push("電梯");
+          if (item.indicators.queue) feats.push("排隊禮遇");
+          if (item.indicators.play) feats.push("遊戲區");
+          featEl.textContent = feats.length ? feats.join("、 ") : "無特殊設施";
+          resultItem.appendChild(featEl);
+          const srcEl = document.createElement("span");
+          srcEl.className = "source-link";
+          const link = document.createElement("a");
+          link.href = item.source;
+          link.textContent = "詳情";
+          link.target = "_blank";
+          srcEl.appendChild(link);
+          resultItem.appendChild(srcEl);
+        }
+        resultsDiv.appendChild(resultItem);
+        count++;
+      });
+      if (count === 0) {
+        resultsDiv.textContent = "未找到符合條件的結果。";
+      }
+    }
+  </script>
 </body>
 </html>
