@@ -1,0 +1,328 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>嬰幼兒友善設施全覽｜表格版 V2.0</title>
+  <meta name="description" content="彙整北中南百貨、賣場、捷運、機場、機場捷運、景點、飯店與公共設施的嬰幼兒友善資訊；支援多條件篩選與CSV匯出。" />
+  <style>
+    :root {
+      --bg: #f6f7f8;
+      --card: #ffffff;
+      --brand: #2b2f36;
+      --accent: #4a90e2;
+      --muted: #8a8f98;
+      --border: #e6e8eb;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "PingFang TC", "Microsoft JhengHei", Arial, sans-serif;
+      background: var(--bg);
+      margin: 0;
+      color: var(--brand);
+      line-height: 1.5;
+    }
+    header {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 10;
+    }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 16px 20px; }
+    .title { font-size: 20px; font-weight: 700; margin: 0 0 4px; }
+    .subtitle { margin: 0; color: var(--muted); font-size: 14px; }
+    .filters { background: var(--card); border:1px solid var(--border); border-radius: 12px; padding: 12px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+    .filters select, .filters input[type="text"] {
+      width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; background: #fff;
+    }
+    .pillset { display:flex; flex-wrap: wrap; gap: 6px; grid-column: 1 / -1; }
+    .pill { display:inline-flex; align-items:center; gap:6px; border:1px solid var(--border); padding:6px 10px; border-radius: 999px; font-size: 13px; background:#fff; }
+    .btns { display: flex; gap: 8px; align-items: center; }
+    .btn {
+      padding: 8px 12px; border-radius: 8px; border:1px solid var(--border); background:#fff; cursor:pointer; font-size: 14px;
+    }
+    .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .muted { color: var(--muted); font-size: 12px; }
+    table { width: 100%; border-collapse: collapse; background: var(--card); border:1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    thead th { background: #fafbfc; font-weight:600; font-size: 13px; padding: 10px; border-bottom:1px solid var(--border); position: sticky; top: 72px; z-index: 5; }
+    tbody td { border-top:1px solid var(--border); font-size: 13px; padding: 10px; text-align: center; }
+    tbody tr:nth-child(even) td { background: #fcfcfd; }
+    .tag { background:#f1f3f5; border:1px solid var(--border); padding:1px 6px; border-radius:999px; font-size:12px; }
+    .ok { color:#0f7b0f; font-weight:700; }
+    .no { color:#999; }
+    .score { font-weight:700; }
+    footer { margin: 24px 0 80px; color: var(--muted); font-size: 12px; }
+    .ads { display:grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
+    .card { background:#fff; border:1px solid var(--border); border-radius:12px; padding:10px; }
+    .card a { text-decoration: none; color: #1a73e8; }
+    @media (max-width: 960px) {
+      .filters { grid-template-columns: 1fr 1fr; }
+      thead th { top: 120px; }
+      .ads { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <p class="title">嬰幼兒友善設施全覽（表格版 V2.0）</p>
+      <p class="subtitle">支援多條件篩選、關鍵字搜尋、CSV 匯出與廣告/聯盟導購插槽（簡約專業風）。</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="filters" aria-label="篩選條件">
+      <select id="regionSelect" aria-label="選擇地區">
+        <option value="">全部地區</option>
+        <option>北部</option>
+        <option>中部</option>
+        <option>南部</option>
+        <option>東部</option>
+        <option>離島</option>
+      </select>
+      <select id="citySelect" aria-label="選擇縣市">
+        <option value="">全部縣市</option>
+        <option>台北市</option><option>新北市</option><option>基隆市</option><option>桃園市</option>
+        <option>新竹市</option><option>新竹縣</option><option>苗栗縣</option>
+        <option>台中市</option><option>彰化縣</option><option>南投縣</option><option>雲林縣</option>
+        <option>嘉義市</option><option>嘉義縣</option><option>台南市</option><option>高雄市</option><option>屏東縣</option>
+        <option>宜蘭縣</option><option>花蓮縣</option><option>台東縣</option>
+        <option>金門縣</option><option>澎湖縣</option><option>連江縣</option>
+      </select>
+      <select id="categorySelect" aria-label="選擇類別">
+        <option value="">全部類別</option>
+        <option>百貨公司</option>
+        <option>購物中心/Outlet</option>
+        <option>賣場/超市</option>
+        <option>捷運</option>
+        <option>機場</option>
+        <option>機場捷運</option>
+        <option>高鐵</option>
+        <option>景點</option>
+        <option>飯店</option>
+        <option>城市公共設施</option>
+        <option>公園/圖書館/親子館</option>
+      </select>
+      <input id="keywordInput" type="text" placeholder="輸入關鍵字（場所/樓層/特色…）" />
+      <div class="btns">
+        <button id="resetBtn" class="btn" title="清除所有篩選條件">清除</button>
+        <button id="exportBtn" class="btn">匯出 CSV</button>
+      </div>
+      <div class="pillset" aria-label="設施指標篩選">
+        <label class="pill"><input type="checkbox" data-k="stroller" /> 推車友善</label>
+        <label class="pill"><input type="checkbox" data-k="nursing" /> 哺乳室</label>
+        <label class="pill"><input type="checkbox" data-k="diaper" /> 尿布台</label>
+        <label class="pill"><input type="checkbox" data-k="hotwater" /> 微波/熱水</label>
+        <label class="pill"><input type="checkbox" data-k="elevator" /> 電梯/斜坡</label>
+        <label class="pill"><input type="checkbox" data-k="queue" /> 親子候位</label>
+        <label class="pill"><input type="checkbox" data-k="play" /> 免費親子遊戲區</label>
+      </div>
+    </section>
+
+    <p class="muted" id="countNote">資料筆數：—</p>
+
+    <section aria-label="資料表格">
+      <table id="table">
+        <thead>
+          <tr>
+            <th>地區</th>
+            <th>縣市</th>
+            <th>類別</th>
+            <th>場所</th>
+            <th>樓層/位置</th>
+            <th>設施（✓ 代表提供）</th>
+            <th>綜合評分</th>
+            <th>來源</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section class="card" style="margin-top:16px;">
+      <h3 style="margin:4px 0 8px; font-size:16px;">被動收入模組</h3>
+      <div class="muted">以下為可替換的廣告與聯盟導購範例。</div>
+      <div class="ads">
+        <div class="card">
+          <strong>Google AdSense 區塊</strong>
+          <div class="muted">將下列註解解除並填入您的 publisher 與 slot。</div>
+<pre style="white-space:pre-wrap; font-size:12px; background:#f7f7f8; padding:8px; border-radius:8px; border:1px solid var(--border);">
+&lt;!--
+&lt;script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"&gt;&lt;/script&gt;
+&lt;ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXX" data-ad-slot="YYYY" data-ad-format="auto"&gt;&lt;/ins&gt;
+&lt;script&gt;(adsbygoogle = window.adsbygoogle || []).push({});&lt;/script&gt;
+--&gt;
+</pre>
+        </div>
+        <div class="card">
+          <strong>蝦皮聯盟導購（範例）</strong>
+          <div class="muted">此為示意連結。實際分潤請以「蝦皮聯盟平台」產生之最終 URL 為準，並將 <code>aff_id</code> 改為您的專屬參數。</div>
+          <ul style="margin:8px 0 0 18px; font-size:14px;">
+            <li><a target="_blank" rel="noopener" href="https://shopee.tw/search?keyword=%E5%AF%B5%E7%AB%A5%E6%8E%A8%E8%BB%8A&aff_id=hstyle">親子推車精選</a></li>
+            <li><a target="_blank" rel="noopener" href="https://shopee.tw/search?keyword=%E5%AD%95%E5%A9%A6%E8%83%BD%E6%BA%AB%E7%93%B6&aff_id=hstyle">奶瓶加熱/保溫</a></li>
+            <li><a target="_blank" rel="noopener" href="https://shopee.tw/search?keyword=%E5%AC%B0%E5%85%92%E8%83%8C%E5%B8%B6&aff_id=hstyle">嬰兒背帶</a></li>
+            <li><a target="_blank" rel="noopener" href="https://shopee.tw/search?keyword=%E5%A9%B4%E5%85%92%E6%BF%95%E7%B4%99%E5%B7%BE&aff_id=hstyle">濕紙巾/外出補充包</a></li>
+            <li><a target="_blank" rel="noopener" href="https://shopee.tw/search?keyword=%E6%8A%A4%E7%94%A8%E8%A2%8B&aff_id=hstyle">尿布外出包</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>合作品牌/檔期</strong>
+          <div class="muted">可置入合作品牌的優惠碼、短期活動或靜態圖。</div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>資料以官方公告與現場標示為準；若有更新歡迎回報。 © hstyle</p>
+    </footer>
+  </main>
+
+<script>
+const IND_KEYS = ["stroller","nursing","diaper","hotwater","elevator","queue","play"];
+
+// 以七大指標計算 5 分制評分
+function calcScore(item) {
+  const t = IND_KEYS.reduce((acc,k)=> acc + (item.indicators?.[k] ? 1 : 0), 0);
+  return Math.round((t / IND_KEYS.length) * 50) / 10; // 一位小數
+}
+
+function cellYN(v) { return v ? '<span class="ok">✓</span>' : '<span class="no">—</span>'; }
+
+const state = {
+  data:[],
+  filters: { region:'', city:'', category:'', keyword:'', indicators: {} }
+};
+
+async function loadData() {
+  const res = await fetch('data/facilities.json?ts=' + Date.now());
+  const json = await res.json();
+  state.data = json;
+  render();
+}
+
+function getFilters() {
+  state.filters.region = document.getElementById('regionSelect').value.trim();
+  state.filters.city = document.getElementById('citySelect').value.trim();
+  state.filters.category = document.getElementById('categorySelect').value.trim();
+  state.filters.keyword = document.getElementById('keywordInput').value.trim().toLowerCase();
+  // indicators
+  const map = {}
+  document.querySelectorAll('.pillset input[type="checkbox"]').forEach(cb => map[cb.dataset.k] = cb.checked);
+  state.filters.indicators = map;
+}
+
+function matches(item) {
+  const f = state.filters;
+  if (f.region && item.region !== f.region) return false;
+  if (f.city && item.city !== f.city) return false;
+  if (f.category && item.category !== f.category) return false;
+  if (f.keyword) {
+    const txt = (item.name + ' ' + (item.floor||'') + ' ' + (item.features||'') + ' ' + (item.notes||'') + ' ' + (item.city||'') + ' ' + (item.category||'')).toLowerCase();
+    if (!txt.includes(f.keyword)) return false;
+  }
+  // all checked indicators must be true
+  for (const k in f.indicators) {
+    if (f.indicators[k] && !item.indicators?.[k]) return false;
+  }
+  return true;
+}
+
+function render() {
+  getFilters();
+  const rows = document.querySelector('#table tbody');
+  rows.innerHTML = '';
+  const filtered = state.data.filter(matches);
+  document.getElementById('countNote').textContent = '資料筆數：' + filtered.length;
+  filtered.forEach(item => {
+    const tr = document.createElement('tr');
+    const score = calcScore(item).toFixed(1);
+    tr.innerHTML = `
+      <td>{item.region}</td>
+      <td>{item.city}</td>
+      <td><span class="tag">{item.category}</span></td>
+      <td>{item.name}</td>
+      <td>{item.floor || '—'}</td>
+      <td style="white-space:nowrap;">${IND_KEYS.map(k => cellYN(item.indicators?.[k])).join(' ')}</td>
+      <td class="score">${score}</td>
+      <td>${item.source ? `<a href="${item.source}" target="_blank" rel="noopener">來源</a>` : '—'}</td>
+    `;
+    rows.appendChild(tr);
+  });
+}
+
+document.getElementById('regionSelect').addEventListener('change', render);
+document.getElementById('citySelect').addEventListener('change', render);
+document.getElementById('categorySelect').addEventListener('change', render);
+document.getElementById('keywordInput').addEventListener('input', render);
+
+document.querySelectorAll('.pillset input[type="checkbox"]').forEach(cb => cb.addEventListener('change', render));
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  document.getElementById('regionSelect').value = '';
+  document.getElementById('citySelect').value = '';
+  document.getElementById('categorySelect').value = '';
+  document.getElementById('keywordInput').value = '';
+  document.querySelectorAll('.pillset input[type="checkbox"]').forEach(cb => cb.checked = false);
+  render();
+});
+
+document.getElementById('exportBtn').addEventListener('click', () => {
+  getFilters();
+  const filtered = state.data.filter(matches);
+  const header = ["region","city","category","name","floor","stroller","nursing","diaper","hotwater","elevator","queue","play","score","source"];
+  const lines = [header.join(",")];
+  filtered.forEach(item => {
+    const score = calcScore(item).toFixed(1);
+    const row = [
+      item.region, item.city, item.category, '"' + item.name.replace(/"/g,'""') + '"', '"' + (item.floor||'').replace(/"/g,'""') + '"',
+      *(IND_KEYS.map(k => item.indicators?.[k] ? '1' : '0')),
+      score, (item.source||'')
+    ];
+  });
+});
+</script>
+<script>
+// CSV export (separated to avoid f-string curly conflicts)
+(function() {
+  const IND_KEYS = ["stroller","nursing","diaper","hotwater","elevator","queue","play"];
+  function calcScore(item) {
+    const t = IND_KEYS.reduce((acc,k)=> acc + (item.indicators?.[k] ? 1 : 0), 0);
+    return Math.round((t / IND_KEYS.length) * 50) / 10;
+  }
+  function toCSVValue(v) {
+    if (v === null || v === undefined) return "";
+    const s = String(v);
+    if (/[",\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+    return s;
+  }
+  document.getElementById('exportBtn').addEventListener('click', () => {
+    const f = window.state?.filters || {};
+    // rebuild filtered list (we'll reuse render's logic via the DOM to avoid duplication)
+    const rows = document.querySelectorAll('#table tbody tr');
+    const header = ["地區","縣市","類別","場所","樓層/位置","推車","哺乳室","尿布台","熱水","電梯","親子候位","遊戲區","綜合評分","來源"];
+    const out = [header.join(",")];
+    rows.forEach(r => {
+      const tds = Array.from(r.children).map(td => td.innerText);
+      // 解析設施欄（第6欄）為 7 個 ✓/—
+      const ys = (tds[5] || "").split(/\s+/).filter(Boolean).map(x=> x.trim()==="✓" ? "1":"0");
+      while (ys.length < 7) ys.push("0");
+      const line = [
+        tds[0], tds[1], tds[2].replace(/\n/g,' ').trim(), tds[3], tds[4],
+        ...ys.slice(0,7), tds[6], (r.querySelector('a') ? r.querySelector('a').href : '')
+      ].map(toCSVValue).join(",");
+      out.push(line);
+    });
+    const blob = new Blob([out.join("\n")], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'facilities_export.csv'; a.click();
+    URL.revokeObjectURL(url);
+  });
+})();
+</script>
+<script>
+// 啟動
+loadData();
+</script>
+</body>
+</html>
