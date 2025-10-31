@@ -1,0 +1,189 @@
+[
+  {
+    "name": "MITSUI OUTLET PARK 林口",
+    "region": "北部",
+    "city": "新北市",
+    "address": "",
+    "category": "購物中心/Outlet",
+    "source": "https://www.mop.com.tw/linkou/tw/service/",
+    "indicators": {
+      "stroller": null,
+      "nursing": null,
+      "diaper": null,
+      "hotwater": null,
+      "elevator": null,
+      "queue": null,
+      "play": null
+    }
+  },
+  {
+    "name": "台茂購物中心 台茂購物中心",
+    "region": "北部",
+    "city": "桃園市",
+    "address": "",
+    "category": "購物中心/室內",
+    "source": "https://www.taimall.com.tw/info-service.php",
+    "indicators": {
+      "stroller": true,
+      "nursing": true,
+      "diaper": true,
+      "hotwater": true,
+      "elevator": null,
+      "queue": null,
+      "play": null
+    }
+  },
+  {
+    "name": "GLORIA OUTLETS 華泰名品城",
+    "region": "北部",
+    "city": "桃園市",
+    "address": "",
+    "category": "購物中心/Outlet",
+    "source": "https://www.gloriaoutlets.com/chi/customer_service_list/",
+    "indicators": {
+      "stroller": true,
+      "nursing": true,
+      "diaper": null,
+      "hotwater": null,
+      "elevator": null,
+      "queue": null,
+      "play": true
+    }
+  },
+  {
+    "name": "遠東百貨 板橋大遠百 Mega City",
+    "region": "北部",
+    "city": "新北市",
+    "address": "",
+    "category": "百貨商場",
+    "source": "https://www.feds.com.tw/",
+    "indicators": {
+      "stroller": null,
+      "nursing": null,
+      "diaper": null,
+      "hotwater": null,
+      "elevator": null,
+      "queue": null,
+      "play": null
+    }
+  },
+  {
+    "name": "遠東百貨 台中大遠百 Top City",
+    "region": "中部",
+    "city": "台中市",
+    "address": "",
+    "category": "百貨商場",
+    "source": "https://www.feds.com.tw/",
+    "indicators": {
+      "stroller": null,
+      "nursing": null,
+      "diaper": null,
+      "hotwater": null,
+      "elevator": null,
+      "queue": null,
+      "play": null
+    }
+  },
+  {
+    "name": "遠東百貨 新竹巨城 Big City",
+    "region": "北部",
+    "city": "新竹市",
+    "address": "",
+    "category": "百貨商場",
+    "source": "https://www.feds.com.tw/",
+    "indicators": {
+      "stroller": null,
+      "nursing": null,
+      "diaper": null,
+      "hotwater": null,
+      "elevator": null,
+      "queue": null,
+      "play": null
+    }
+  },
+  {
+    "name": "微風 微風南山",
+    "region": "北部",
+    "city": "台北市",
+    "address": "",
+    "category": "百貨商場",
+    "source": "https://www.breezecenter.com/",
+    "indicators": {
+      "stroller": null,
+      "nursing": null,
+      "diaper": null,
+      "hotwater": null,
+      "elevator": true,
+      "queue": null,
+      "play": null
+    }
+  },
+  {
+    "name": "統一夢時代 高雄夢時代",
+    "region": "南部",
+    "city": "高雄市",
+    "address": "",
+    "category": "百貨商場",
+    "source": "https://www.dream-mall.com.tw/",
+    "indicators": {
+      "stroller": null,
+      "nursing": null,
+      "diaper": null,
+      "hotwater": null,
+      "elevator": null,
+      "queue": null,
+      "play": null
+    }
+  },
+  {
+    "name": "京站 Q Square 京站時尚廣場",
+    "region": "北部",
+    "city": "台北市",
+    "address": "",
+    "category": "百貨商場",
+    "source": "https://www.qsquare.com.tw/",
+    "indicators": {
+      "stroller": null,
+      "nursing": null,
+      "diaper": null,
+      "hotwater": null,
+      "elevator": null,
+      "queue": null,
+      "play": null
+    }
+  },
+  {
+    "name": "臺北捷運 台北車站",
+    "region": "北部",
+    "city": "台北市",
+    "address": "",
+    "category": "捷運站",
+    "source": "https://www.metro.taipei/",
+    "indicators": {
+      "stroller": null,
+      "nursing": null,
+      "diaper": null,
+      "hotwater": null,
+      "elevator": true,
+      "queue": null,
+      "play": null
+    }
+  },
+  {
+    "name": "臺灣高鐵 台北站",
+    "region": "北部",
+    "city": "台北市",
+    "address": "",
+    "category": "高鐵站",
+    "source": "https://www.thsrc.com.tw/",
+    "indicators": {
+      "stroller": null,
+      "nursing": null,
+      "diaper": null,
+      "hotwater": null,
+      "elevator": null,
+      "queue": null,
+      "play": null
+    }
+  }
+]
