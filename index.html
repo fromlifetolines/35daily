@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>嬰幼兒友善地點｜全台百貨 / 捷運 / 高鐵 / 公共設施</title>
+<style>
+  :root{
+    --bg:#0b1015;
+    --panel:#111827cc;
+    --card:#0f172acc;
+    --muted:#98a2b3;
+    --text:#e6edf3;
+    --accent:#7dd3fc;
+    --border:#273142;
+    --chip:#0b1722;
+    --chip-border:#1f2a3a;
+    --shadow:0 10px 30px rgba(0,0,0,.35);
+    --hdr:112px;
+    --tap:44px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background: radial-gradient(1200px 1200px at 70% -200px,#0c1724,#0b1015 60%);
+    color:var(--text); font: 15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Noto Sans TC,Roboto,"Helvetica Neue",Arial,"Apple Color Emoji","Segoe UI Emoji",sans-serif;
+  }
+  a{color:#8bd3ff}
+  header{
+    position: sticky; top:0; z-index:50;
+    backdrop-filter: saturate(140%) blur(6px);
+    background: linear-gradient(180deg, rgba(15,23,42,.9), rgba(15,23,42,.75));
+    border-bottom:1px solid var(--border);
+  }
+  header .wrap{max-width:1100px; margin:0 auto; padding:18px 16px 12px}
+  h1{margin:0 0 10px; font-size:20px; letter-spacing:.2px}
+  .row{display:flex; align-items:center; gap:8px}
+  .spacer{flex:1}
+  .muted{color:var(--muted)}
+
+  /* Collapsible filters */
+  #filters{ overflow:clip; transition: grid-template-rows .2s, padding .2s, margin .2s }
+  #filters.collapsed{ display:grid; grid-template-rows:0fr; padding:0; margin:0 }
+  #filters.collapsed > *{ overflow:hidden }
+
+  .toolbar{display:grid; gap:10px; grid-template-columns: 1fr 1fr 1fr 1.6fr; align-items:center}
+  @media (max-width:960px){ .toolbar{grid-template-columns: 1fr 1fr} }
+  @media (max-width:720px){ .toolbar{grid-template-columns: 1fr} }
+  .field{display:flex; gap:8px; align-items:center}
+  .label{color:var(--muted); font-size:13px; width:66px; flex:0 0 auto}
+
+  select,input[type="text"],button.btn{
+    width:100%; min-height:var(--tap);
+    font-size:16px; color:var(--text); background:#0b1520; border:1px solid var(--chip-border);
+    border-radius:12px; padding:10px 12px;
+    transition:border-color .16s, box-shadow .16s, transform .06s, background-color .16s;
+  }
+  select:hover, input:hover{border-color:#2b3b50}
+  select:focus-visible, input:focus-visible{
+    outline:2px solid var(--accent); outline-offset:2px; border-color:transparent;
+  }
+  .search{display:flex; gap:10px; align-items:center}
+  .search input{flex:1}
+
+  .chips{display:flex; flex-wrap:wrap; gap:10px; margin:10px 0 6px}
+  .chip{
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--chip); border:1px solid var(--chip-border); border-radius:999px;
+    padding:8px 10px; user-select:none;
+    transition: background .15s, border-color .15s;
+  }
+  .chip input{accent-color:#22d3ee; width:18px; height:18px}
+  .chip .ico{width:18px; text-align:center}
+  .chip:has(input:checked){ background:rgba(56,189,248,.18); border-color:#47c6ff }
+
+  .actions{display:flex; gap:10px; align-items:center; justify-content:flex-end; margin-top:8px}
+  .btn{cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px}
+  .btn.primary{background:var(--accent); color:#012032; border:1px solid #47c6ff}
+  .btn.ghost{background:#0b1520; color:var(--text)}
+  .btn:hover{transform:translateY(-1px)} .btn:active{transform:none}
+  .count{font-size:13px; color:var(--muted); margin-left:6px}
+
+  main{ padding-top: calc(var(--hdr) + 8px) }
+  .container{max-width:1100px; margin:0 auto; padding:16px}
+
+  .view-toggle{display:flex; gap:8px; margin-bottom:10px}
+
+  .list{ width:100%; border-collapse:separate; border-spacing:0 10px }
+  .list thead th{
+    position: sticky; top: var(--hdr);
+    background: #0f172acc; backdrop-filter: blur(6px);
+    z-index:5; border-bottom:1px solid var(--border);
+    font-weight:600; text-align:left; padding:10px 12px; font-size:13px; color:#bfd5e6;
+  }
+  .list tbody tr{ background: var(--card); border:1px solid var(--border) }
+  .list tbody td{ padding:12px }
+  .name{ font-weight:600 }
+  .badges{ display:flex; flex-wrap:wrap; gap:6px }
+  .badge{ display:inline-flex; align-items:center; gap:6px; border-radius:999px; padding:6px 10px; font-size:12px; border:1px solid transparent }
+  .has{ background: rgba(34,197,94,.15); color:#86efac; border-color:#14532d }
+  .no{  background: rgba(239,68,68,.12); color:#fecaca; border-color:#7f1d1d }
+  .unk{ background: rgba(100,116,139,.15); color:#cbd5e1; border-color:#334155 }
+
+  .grid{ display:grid; grid-template-columns: repeat(12,1fr); gap:12px }
+  .card{ grid-column: span 12; background:var(--card); border:1px solid var(--border); border-radius:16px; padding:14px; box-shadow:var(--shadow); transition: transform .12s, box-shadow .15s }
+  .card:hover{ transform:translateY(-2px); box-shadow:0 12px 28px rgba(0,0,0,.32) }
+  @media (min-width:600px){ .card{ grid-column: span 6 } }
+  @media (min-width:980px){ .card{ grid-column: span 4 } }
+  .meta{ display:flex; gap:10px; flex-wrap:wrap; color:#a3b2c1; font-size:13px }
+  .pill{ background:#0b1520; border:1px solid var(--chip-border); padding:4px 8px; border-radius:999px }
+
+  .fab{ position: fixed; right: 14px; bottom: 18px; z-index: 60;
+        border-radius: 999px; padding: 12px 16px; box-shadow: var(--shadow);
+        background: var(--accent); color:#001e2c; border: 1px solid #47c6ff; cursor: pointer; display: none; }
+  @media (max-width: 720px){ .fab{ display: inline-flex } }
+
+  .empty{ margin: 24px 0; padding: 16px; border:1px dashed #334155; border-radius:12px; color:#cbd5e1; background:#0b1520 }
+  .empty code{ background:#0b1722; padding:2px 6px; border-radius:6px; border:1px solid #1f2a3a }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="row">
+      <h1>嬰幼兒友善地點｜全台百貨/捷運/高鐵/公共設施</h1>
+      <div class="spacer"></div>
+      <button class="btn ghost" id="filtersToggle">收合篩選</button>
+    </div>
+    <div id="filters">
+      <div style="display:flex; flex-direction:column; gap:6px">
+        <div class="toolbar">
+          <div class="field">
+            <label class="label" for="region">區域</label>
+            <select id="region"><option value="">全部地區</option></select>
+          </div>
+          <div class="field">
+            <label class="label" for="city">縣市</label>
+            <select id="city"><option value="">全部縣市</option></select>
+          </div>
+          <div class="field">
+            <label class="label" for="category">類別</label>
+            <select id="category"><option value="">全部類別</option></select>
+          </div>
+          <div class="search">
+            <input id="kw" type="text" placeholder="輸入地點 / 類別 / 城市..." />
+          </div>
+        </div>
+        <div class="chips" id="chips"></div>
+        <div class="actions">
+          <span class="count" id="count">結果 0 筆</span>
+          <div class="spacer"></div>
+          <div class="view-toggle">
+            <button class="btn ghost" id="viewList">清單</button>
+            <button class="btn ghost" id="viewCard">卡片</button>
+          </div>
+          <button class="btn ghost" id="clear">清除條件</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+    <div id="empty" class="empty" style="display:none"></div>
+
+    <div id="listView" style="display:block">
+      <table class="list">
+        <thead>
+          <tr>
+            <th style="width:34%">名稱</th>
+            <th style="width:16%">地區/城市</th>
+            <th style="width:14%">類別</th>
+            <th>設施</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+
+    <div id="cardView" style="display:none">
+      <div class="grid" id="grid"></div>
+    </div>
+  </div>
+</main>
+
+<button class="fab" id="fab">篩選</button>
+
+<script>
+const FACILITY_DEF = [
+  {key:'stroller', label:'嬰兒車租借', icon:'👶'},
+  {key:'nursing',  label:'哺(集)乳室', icon:'🍼'},
+  {key:'diaper',   label:'尿布檯',     icon:'🧻'},
+  {key:'hotwater', label:'熱水/飲水',  icon:'💧'},
+  {key:'elevator', label:'電梯',       icon:'🛗'},
+  {key:'queue',    label:'排隊禮遇',   icon:'👨‍👩‍👧'},
+  {key:'play',     label:'遊戲區',     icon:'🎠'}
+];
+
+let ALL = []; let filtered = [];
+let state = { region:'', city:'', category:'', kw:'', view:'list', required:new Set() };
+
+// Sticky offset
+const hdrEl = document.querySelector('header');
+function setHeaderOffset(){
+  const h = hdrEl.getBoundingClientRect().height;
+  document.documentElement.style.setProperty('--hdr', h + 'px');
+}
+window.addEventListener('load', setHeaderOffset);
+window.addEventListener('resize', setHeaderOffset);
+new ResizeObserver(setHeaderOffset).observe(hdrEl);
+
+// Build chips
+const chipsEl = document.getElementById('chips');
+FACILITY_DEF.forEach(def => {
+  const c = document.createElement('label');
+  c.className = 'chip';
+  c.innerHTML = `<span class="ico">${def.icon}</span><span>${def.label}</span>
+                 <input type="checkbox" data-key="${def.key}" style="margin-left:6px">`;
+  chipsEl.appendChild(c);
+});
+chipsEl.addEventListener('change', e=>{
+  if(e.target && e.target.matches('input[type="checkbox"][data-key]')){
+    const k = e.target.dataset.key;
+    if(e.target.checked) state.required.add(k); else state.required.delete(k);
+    applyFilters();
+  }
+});
+
+// Controls
+const regionSel = document.getElementById('region');
+const citySel = document.getElementById('city');
+const catSel = document.getElementById('category');
+const kwInput = document.getElementById('kw');
+regionSel.addEventListener('change', ()=>{ state.region = regionSel.value; buildCityOptions(); applyFilters(); });
+citySel.addEventListener('change', ()=>{ state.city = citySel.value; applyFilters(); });
+catSel.addEventListener('change', ()=>{ state.category = catSel.value; applyFilters(); });
+kwInput.addEventListener('input', ()=>{ state.kw = kwInput.value.trim(); applyFilters(); });
+document.getElementById('clear').addEventListener('click', ()=>{
+  regionSel.value=''; citySel.value=''; catSel.value=''; kwInput.value=''; state.required.clear();
+  document.querySelectorAll('#chips input[type=checkbox]').forEach(cb=>cb.checked=false);
+  state = {...state, region:'', city:'', category:'', kw:''};
+  buildCityOptions(); applyFilters();
+});
+document.getElementById('viewList').addEventListener('click', ()=>setView('list'));
+document.getElementById('viewCard').addEventListener('click', ()=>setView('card'));
+document.getElementById('fab').addEventListener('click', ()=>document.getElementById('filtersToggle').click());
+document.getElementById('filtersToggle').addEventListener('click', ()=>{
+  document.getElementById('filters').classList.toggle('collapsed');
+  setHeaderOffset();
+});
+function setView(v){ state.view=v;
+  document.getElementById('listView').style.display = (v==='list') ? 'block':'none';
+  document.getElementById('cardView').style.display = (v==='card') ? 'block':'none';
+}
+
+// Helpers
+function coerce(v){
+  if (v === true || v === false) return v;
+  const s = (v ?? '').toString().trim();
+  if (['有','Y','y','1','true','True'].includes(s)) return true;
+  if (['無','N','n','0','false','False'].includes(s)) return false;
+  return null;
+}
+function normIndicators(ind){
+  if (!ind) return null;
+  return {
+    stroller: coerce(ind.stroller),
+    nursing:  coerce(ind.nursing),
+    diaper:   coerce(ind.diaper),
+    hotwater: coerce(ind.hotwater),
+    elevator: coerce(ind.elevator),
+    queue:    coerce(ind.queue),
+    play:     coerce(ind.play),
+  };
+}
+
+// Loader (robust: json → data/json → legacy js globals)
+async function loadData(){
+  const empty = (msg, tips=[])=>{
+    const box = document.getElementById('empty');
+    box.style.display = 'block';
+    box.innerHTML = `<div style="font-weight:600; margin-bottom:6px">目前沒有載入到資料</div>
+    <div class="muted">${msg}</div>
+    <ul style="margin:10px 0 0 18px">${tips.map(t=>`<li>${t}</li>`).join('')}</ul>`;
+  };
+
+  async function tryFetchJSON(url){
+    try{
+      const res = await fetch(url, {cache:'no-cache'});
+      if(!res.ok) return null;
+      const j = await res.json();
+      if (Array.isArray(j)) return j;
+      if (Array.isArray(j?.data)) return j.data;
+      return null;
+    }catch(_){ return null; }
+  }
+
+  function loadLegacyJS(url, globalName){
+    return new Promise(resolve=>{
+      const s=document.createElement('script'); s.src=url; s.onload=()=>resolve(window[globalName]||null);
+      s.onerror=()=>resolve(null);
+      document.head.appendChild(s);
+    });
+  }
+
+  // 1) facilities.json (root) → 2) data/facilities.json → 3) facilities-data.js (FACILITIES / facilitiesData)
+  ALL = await tryFetchJSON('facilities.json');
+  if(!ALL) ALL = await tryFetchJSON('data/facilities.json');
+  if(!ALL){
+    ALL = await loadLegacyJS('facilities-data.js','FACILITIES');
+    if(!ALL) ALL = await loadLegacyJS('facilities-data.js','facilitiesData');
+  }
+
+  if(!ALL || !ALL.length){
+    empty('請確認下列其一存在於與 <code>index.html</code> 相同資料夾：', [
+      '1) <code>facilities.json</code>（推薦；Actions 會自動產生）',
+      '2) <code>data/facilities.json</code>',
+      '3) 舊版 <code>facilities-data.js</code>（且定義全域變數 <code>FACILITIES</code> 或 <code>facilitiesData</code>）',
+    ]);
+    ALL = []; filtered = []; applyFilters(); return;
+  }
+
+  // Normalize
+  ALL = ALL.map(x=>{
+    const i = normIndicators(x.indicators) orFromFlat(x);
+    return {
+      name: x.name || [x.chain, x.branch].filter(Boolean).join(' '),
+      region: x.region || '', city: x.city || '', address: x.address || '',
+      category: x.category || '百貨商場',
+      source: x.source || x.url || x.services_url || x.homepage_url || '',
+      indicators: i
+    };
+  });
+
+  function orFromFlat(x){
+    // if indicators missing, try reading flat keys
+    if (x.indicators) return normIndicators(x.indicators);
+    const any = ['stroller','nursing','diaper','hotwater','elevator','queue','play'].some(k=>k in x);
+    if (!any) return {stroller:null,nursing:null,diaper:null,hotwater:null,elevator:null,queue:null,play:null};
+    return {
+      stroller: coerce(x.stroller),
+      nursing:  coerce(x.nursing),
+      diaper:   coerce(x.diaper),
+      hotwater: coerce(x.hotwater),
+      elevator: coerce(x.elevator),
+      queue:    coerce(x.queue),
+      play:     coerce(x.play),
+    };
+  }
+
+  buildRegionOptions(); buildCategoryOptions(); buildCityOptions(); applyFilters();
+}
+
+function uniq(arr){ return Array.from(new Set(arr.filter(Boolean))); }
+function buildRegionOptions(){
+  const options = [''].concat(uniq(ALL.map(x=>x.region)));
+  regionSel.innerHTML = options.map(v=>`<option value="${v}">${v||'全部地區'}</option>`).join('');
+}
+function buildCategoryOptions(){
+  const options = [''].concat(uniq(ALL.map(x=>x.category)));
+  catSel.innerHTML = options.map(v=>`<option value="${v}">${v||'全部類別'}</option>`).join('');
+}
+function buildCityOptions(){
+  let pool = ALL;
+  if(state.region){ pool = pool.filter(x=>x.region===state.region); }
+  const options = [''].concat(uniq(pool.map(x=>x.city)));
+  citySel.innerHTML = options.map(v=>`<option value="${v}">${v||'全部縣市'}</option>`).join('');
+}
+
+function matches(item){
+  if(state.region && item.region!==state.region) return false;
+  if(state.city && item.city!==state.city) return false;
+  if(state.category && item.category!==state.category) return false;
+  if(state.required.size){
+    for(const k of state.required){
+      const val = item.indicators?.[k];
+      if(val!==true) return false;
+    }
+  }
+  if(state.kw){
+    const kw = state.kw.toLowerCase();
+    const hay = [item.name,item.category,item.city,item.region].join(' ').toLowerCase();
+    if(!hay.includes(kw)) return false;
+  }
+  return true;
+}
+
+function badge(key, present){
+  const def = FACILITY_DEF.find(d=>d.key===key);
+  let type = 'unk';
+  if(present === true) type='has'; else if(present === false) type='no';
+  return `<span class="badge ${type}" title="${def.label}">${def.icon} ${def.label}</span>`;
+}
+
+function renderList(){
+  const tb = document.getElementById('tbody');
+  tb.innerHTML = filtered.map(item=>{
+    const fac = FACILITY_DEF.map(d=> badge(d.key, item.indicators?.[d.key]) ).join('');
+    const meta = `${item.region || ''}・${item.city || ''}`;
+    return `<tr>
+      <td class="name">${item.name || ''}<div class="muted" style="font-size:12px;margin-top:4px"><a href="${item.source||'#'}" target="_blank">官方資訊</a></div></td>
+      <td>${meta}</td>
+      <td>${item.category || ''}</td>
+      <td><div class="badges">${fac}</div></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderCards(){
+  const g = document.getElementById('grid');
+  g.innerHTML = filtered.map(item=>{
+    const fac = FACILITY_DEF.map(d=> badge(d.key, item.indicators?.[d.key]) ).join('');
+    return `<div class="card">
+      <div class="row" style="margin-bottom:8px">
+        <div style="font-weight:700; font-size:16px">${item.name||''}</div>
+        <div class="spacer"></div>
+        <a href="${item.source||'#'}" target="_blank" class="pill" style="text-decoration:none;color:#8bd3ff;border-color:#203245">官方資訊</a>
+      </div>
+      <div class="meta" style="margin-bottom:10px">
+        <span class="pill">${item.region||''}</span>
+        <span class="pill">${item.city||''}</span>
+        <span class="pill">${item.category||''}</span>
+      </div>
+      <div class="badges">${fac}</div>
+    </div>`;
+  }).join('');
+}
+
+function applyFilters(){
+  filtered = ALL.filter(matches);
+  document.getElementById('count').textContent = '結果 ' + filtered.length + ' 筆';
+  document.getElementById('empty').style.display = (!ALL.length ? 'block' : 'none');
+  renderList(); renderCards();
+}
+
+loadData();
+</script>
+</body>
+</html>
